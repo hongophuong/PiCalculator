@@ -1,5 +1,8 @@
 package vn.com.tma.training.pi.algorithm.concreteclass;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import vn.com.tma.training.pi.algorithm.abstractclass.ParameterInput;
 
 public class LeibnizParameter extends ParameterInput {
@@ -7,13 +10,9 @@ public class LeibnizParameter extends ParameterInput {
 	final static String TYPE = "leibniz";
 
 	public LeibnizParameter() {
-		this.parameters = new double[2];
-		this.parameters[0] = 0;
-		this.parameters[1] = 0;
-	}
-
-	private boolean checkLeibnizParameter(double from, double to) {
-		return ((to >= from) && (from >= 0)) ? true : false;
+		this.parameters = new ArrayList<Object>(2);
+		this.parameters.add(0);
+		this.parameters.add(0);
 	}
 
 	@Override
@@ -22,14 +21,19 @@ public class LeibnizParameter extends ParameterInput {
 	}
 
 	@Override
-	protected boolean checkParameter(double[] parameters) {
+	protected boolean checkParameter(List<?> parameters) {
 		if (parameters != null) {
-			if (parameters.length >= 2 && checkLeibnizParameter(parameters[0],
-					parameters[1])){
+			if (parameters.size() >= 2
+					&& checkLeibnizParameter((Double) parameters.get(0),
+							(Double) parameters.get(1))) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private boolean checkLeibnizParameter(double from, double to) {
+		return ((to >= from) && (from >= 0)) ? true : false;
 	}
 
 }

@@ -26,90 +26,20 @@ import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
  * @see IAlgorithm
  */
 public class MultiThreadPiCalculator {
-	public static final int MAX_THREAD = 100;
 	private CalculatorParameter parameters;
-	private List<IAlgorithm> taskList; // Instead of creating new instance for
-										// each task, create a list of task
-										// which size equal number of thread in
-										// thread pool
+	private List<IAlgorithm> taskList;
 	private ExecutorService executor; // To create thread pool
-	private BigDecimal MAX_DOUBLE = new BigDecimal(Double.MAX_VALUE); // To
-																		// check
-																		// number
-	// overflow
+
 	private double Pi = 0.0; // store calculated result
 	private double completedCalculation = 0.0; // store number of calculation
 												// have completed
 
-	public int getNumberOfThread() {
-		return nThread;
+	public void setParameter(CalculatorParameter parameters) {
+		this.parameters = parameters;
 	}
 
 	public double getCompletedCalculation() {
 		return completedCalculation;
-	}
-
-	/**
-	 * Set number of thread will be created. This number must > 0 and <
-	 * MAX_THEAD. Throw a Arithmetic Exception if condition is not met.
-	 * 
-	 * @param nOfThread
-	 * @exception ArithmeticException
-	 */
-	public void setNumberOfThread(int nOfThread) {
-		if (nOfThread == 0) {
-			this.nThread = Runtime.getRuntime().availableProcessors();
-		} else if (nOfThread < 0 || nOfThread > MAX_THREAD) {
-			throw new ArithmeticException("Number of Thread out of range!");
-		} else {
-			this.nThread = nOfThread;
-		}
-	}
-
-	public double getNumberOfCalculation() {
-		return nCalculation;
-	}
-
-	/**
-	 * Set number of calculation (total of loop). This number must >=0 and <=
-	 * Double.MAX_DOUBLE Throw a Arithmetic Exception if condition is not met.
-	 * 
-	 * @param nCalculation
-	 * @see BigDecimal
-	 * @exception ArithmeticException
-	 */
-	public void setNumberOfCalculation(BigDecimal nCalculation) {
-		if (nCalculation.compareTo(BigDecimal.ZERO) >= 0
-				&& nCalculation.compareTo(MAX_DOUBLE) <= 0) {
-			this.nCalculation = nCalculation.doubleValue();
-		} else {
-			throw new ArithmeticException("Number of calculation out of range!");
-		}
-	}
-
-	public double getCalcEachThread() {
-		return nCalcEachThread;
-	}
-
-	/**
-	 * Set number of calculation each thread will handle. This number must >=0
-	 * and <= number of calculations. Throw a Arithmetic Exception if condition
-	 * is not met.
-	 * 
-	 * @param nEachThread
-	 * @see BigDecimal
-	 * @exception ArithmeticException
-	 */
-	public void setCalcEachThread(BigDecimal nEachThread) {
-		if (nCalculation == 0) {
-			this.nCalcEachThread = 0;
-		} else if (nEachThread.compareTo(BigDecimal.ZERO) < 0
-				|| nEachThread.doubleValue() > nCalculation) {
-			throw new ArithmeticException(
-					"Number of calculations each thread out of range!(<= 0 or > number of calculation)");
-		} else {
-			this.nCalcEachThread = nEachThread.doubleValue();
-		}
 	}
 
 	/**
@@ -126,17 +56,10 @@ public class MultiThreadPiCalculator {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public double calculate(int numberOfThread, BigDecimal numberOfCalculation,
-			BigDecimal calculationEachThread, IAlgorithm algorithm) {
+	public double calculate() {
 		int nTask;
 		double lowerBound;
-
-		// Set parameter
-		setNumberOfThread(numberOfThread);
-		setNumberOfCalculation(numberOfCalculation);
-		setCalcEachThread(calculationEachThread);
-		Pi = 0;
-
+		
 		// Create a threadpool have fixed number of threads
 		executor = Executors.newFixedThreadPool(getNumberOfThread());
 		if (nCalculation == 0) {
@@ -193,7 +116,7 @@ public class MultiThreadPiCalculator {
 				}
 			}
 
-			// the last task contain calculation may remain
+			// the last task contain calculation may remained
 			if ((nCalculation - completedCalculation) > 0) {
 				taskList.get(0).setStartNumber(completedCalculation + 1);
 				taskList.get(0).setEndNumber(nCalculation);
@@ -201,7 +124,7 @@ public class MultiThreadPiCalculator {
 				Pi += result.get().getSum();
 			}
 		} catch (Exception e) {
-//			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		executor.shutdown(); // Thread pool accept no more task
 
@@ -238,13 +161,4 @@ public class MultiThreadPiCalculator {
 		return Pi;
 	}
 
-	public boolean isRunning() {
-		if (executor == null) {
-			return false;
-		}
-		if (executor.isTerminated()) {
-			return false;
-		}
-		return true;
-	}
 }

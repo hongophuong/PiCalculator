@@ -6,10 +6,12 @@
 package vn.com.tma.training.pi;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-import vn.com.tma.training.pi.algorithm.concreteclass.LeibnizAlgorithm;
-import vn.com.tma.training.pi.algorithm.concreteclass.LeibnizAlgorithmDecorator;
+import vn.com.tma.training.pi.algorithm.concreteclass.LeibnizWorkShop;
+import vn.com.tma.training.pi.calculator.CalculatorParameter;
 import vn.com.tma.training.pi.calculator.MultiThreadPiCalculator;
 
 /**
@@ -21,16 +23,19 @@ public class App {
 	static MultiThreadPiCalculator multiThreadPiCalculator = new MultiThreadPiCalculator();
 	static BigDecimal numberOfCalculation, calculationEachThread;
 	static int numberOfThread;
-
+	static LeibnizWorkShop workshop = new LeibnizWorkShop();
+	static CalculatorParameter input = new CalculatorParameter();
+	static List<Object> parameters = new ArrayList<Object>();
+	
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		String control;
-
+		
 		while (true) {
 			System.out.println("Number of calculations n =  ");
 			numberOfCalculation = scanner.nextBigDecimal();
 			System.out.println("Number of threads t (0 < t <"
-					+ MultiThreadPiCalculator.MAX_THREAD + ") ");
+					+ CalculatorParameter.MAX_THREAD + ") ");
 			System.out
 					.println("If input 0 then t = number of processor on computer! t = ");
 			numberOfThread = scanner.nextInt();
@@ -39,18 +44,24 @@ public class App {
 			calculationEachThread = scanner.nextBigDecimal();
 			System.out
 					.println("-----------------Calculate-PI-------------------");
+			parameters.add(numberOfCalculation);
+			parameters.add(numberOfThread);
+			parameters.add(calculationEachThread);
+			
 			new Thread(new Runnable() {
 
 				public void run() {
 					try {
 						long startPoint = System.currentTimeMillis();
-						multiThreadPiCalculator.calculate(numberOfThread,
-								numberOfCalculation, calculationEachThread,
-								new LeibnizAlgorithmDecorator( new LeibnizAlgorithm()));
+						input.setParameters(parameters);
+						workshop.setParameter(input);
+						workshop.calculate();
 						System.out.println("Eslapsed Time: "
 								+ (System.currentTimeMillis() - startPoint));
 					}  catch (ArithmeticException e) {
 						System.out.println("Error: " + e.getMessage());
+					} finally{
+						parameters.clear();
 					}
 
 				}
@@ -83,9 +94,9 @@ public class App {
 					multiThreadPiCalculator.stopCalculation();
 				}
 			}
-			if (multiThreadPiCalculator.isRunning()) {
-				multiThreadPiCalculator.stopCalculation();
-			}
+//			if (multiThreadPiCalculator.isRunning()) {
+//				multiThreadPiCalculator.stopCalculation();
+//			}
 		}
 
 	}

@@ -18,7 +18,6 @@ public class CalculationTask implements Callable<Double> {
 		this.algorithm.setParameter(input);
 	}
 
-	@Override
 	public Double call() throws Exception {
 		double result = algorithm.runAlgorithm();
 		return result;

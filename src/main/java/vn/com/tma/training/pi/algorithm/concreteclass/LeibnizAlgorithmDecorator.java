@@ -10,19 +10,16 @@ public class LeibnizAlgorithmDecorator extends AlgorithmDecorator {
 		algorithms = a;
 	}
 
-	@Override
 	public void setParameter(ParameterInput input) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public double runAlgorithm() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public double getResult() {
 		// TODO Auto-generated method stub
 		return 0;

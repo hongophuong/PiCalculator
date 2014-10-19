@@ -6,6 +6,7 @@
 package vn.com.tma.training.pi.algorithm.concreteclass;
 
 import java.util.InputMismatchException;
+import java.util.List;
 
 import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
 import vn.com.tma.training.pi.algorithm.abstractclass.ParameterInput;
@@ -26,7 +27,6 @@ public class LeibnizAlgorithm implements IAlgorithm {
 	private double sum = 0.0; // the sum using Leibniz Formula
 	private double denominator; // Mean (2*n+1) in Leibniz fomular
 
-	@Override
 	public double runAlgorithm() {
 		// If startNumber is odd then sign = -1 else sign = 1
 		double sign = (startNumber % 2 == 0) ? 1 : -1;
@@ -42,19 +42,17 @@ public class LeibnizAlgorithm implements IAlgorithm {
 		return sum;
 	}
 
-	@Override
 	public void setParameter(ParameterInput input) {
 		if (!input.istype(LeibnizParameter.TYPE)) {
 			throw new InputMismatchException(
 					"Wrong input for Leibniz formular!");
 		}
-		double[] parameters = input.getParameters();
-		startNumber = parameters[0];
-		endNumber = parameters[1];
+		List<?> parameters = input.getParameters();
+		startNumber = (Double) parameters.get(0);
+		endNumber = (Double) parameters.get(1);
 		sum = 0;
 	}
 
-	@Override
 	public double getResult() {
 		return sum;
 	}
