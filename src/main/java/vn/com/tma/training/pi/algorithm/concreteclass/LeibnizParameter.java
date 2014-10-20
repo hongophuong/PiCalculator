@@ -7,7 +7,7 @@ import vn.com.tma.training.pi.algorithm.abstractclass.ParameterInput;
 
 public class LeibnizParameter extends ParameterInput {
 
-	final static String TYPE = "leibniz";
+	final public static String TYPE = "leibniz";
 
 	public LeibnizParameter() {
 		this.parameters = new ArrayList<Object>(2);
@@ -21,7 +21,7 @@ public class LeibnizParameter extends ParameterInput {
 	}
 
 	@Override
-	protected boolean checkParameter(List<?> parameters) {
+	protected boolean checkParameter(List<Object> parameters) {
 		if (parameters != null) {
 			if (parameters.size() >= 2
 					&& checkLeibnizParameter((Double) parameters.get(0),

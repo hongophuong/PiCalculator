@@ -10,15 +10,16 @@ import java.util.concurrent.Future;
 
 import vn.com.tma.training.pi.algorithm.abstractclass.AlgorithmWorkShop;
 import vn.com.tma.training.pi.algorithm.abstractclass.CalculationTask;
+import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
 import vn.com.tma.training.pi.calculator.CalculatorParameter;
 
 public class LeibnizWorkShop implements AlgorithmWorkShop {
-	double nCalculation, nCalcEachThread;
-	int nThread;
+	private double nCalculation, nCalcEachThread;
+	private int nThread;
 	private List<CalculationTask> taskList;
 	private ExecutorService executor; // To create thread pool
-
 	private double Pi; // store calculated result
+	private double nCompletedCalculation;
 
 	public void setParameter(CalculatorParameter input) {
 		List<?> parameters = input.getParameters();
@@ -27,21 +28,27 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 		this.nCalcEachThread = ((BigDecimal) parameters.get(2)).doubleValue();
 	}
 
-	public double calculate() {
+	public double run() {
 		int nTask;
-		double lowerBound;
-		Pi = 0.0;
-		// Create a threadpool have fixed number of threads
-		executor = Executors.newFixedThreadPool(nThread);
-		if (nCalculation == 0) {
-			nTask = 1;
-		} else {
-			nTask = (int) (nCalculation / nCalcEachThread); // compute number of
-															// task
-		}
+		double startNumber, endNumber, currentEndNumber;
+		boolean stopped = false;
+		Pi = 4;
+		nCompletedCalculation = 0;
 
-		// Create a fixed number of task instance, it equal to number of threads
-		// This help to not create too many task objects
+		/*
+		 * Create a threadpool have fixed number of threads
+		 */
+		executor = Executors.newFixedThreadPool(nThread);
+
+		/*
+		 * Compute number of task
+		 */
+		nTask = (int) (nCalculation / nCalcEachThread);
+
+		/*
+		 * Create a fixed number of task instance, it equal to number of threads
+		 * This help to not create too many task objects
+		 */
 		taskList = new ArrayList<CalculationTask>();
 		int taskListSize = Math.min(nTask, nThread);
 		for (int i = 0; i < taskListSize; i++) {
@@ -53,47 +60,58 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 		Iterator<CalculationTask> taskIterator = taskList.iterator();
 		CalculationTask temp = null;
 		try {
-			LeibnizParameter parameter = new LeibnizParameter();
-			List<Object> parameterList = new ArrayList<Object>();
-			for (int i = 0; i < nTask; i++) {
-				// devide calculation for each task
+			LeibnizParameter input = new LeibnizParameter();
+			List<Object> parameters = new ArrayList<Object>();
+			currentEndNumber = 0;
+
+			while (nCompletedCalculation < nCalculation && !stopped) {
 				if (taskIterator.hasNext()) {
 					temp = taskIterator.next();
-					lowerBound = i * nCalcEachThread;
-					parameterList.add(lowerBound + (i == 0 ? 0 : 1));
-					parameterList.add(lowerBound + nCalcEachThread);
-					parameter.setParameters(parameterList);
-					temp.setAlgorithmInput(parameter);
-					parameterList.clear();
-				}
-				// when devide calculation for all task instance, let the thread
-				// pool do these tasks
-				if (((i + 1) % taskListSize) == 0) {
-					List<Future<Double>> results = executor.invokeAll(taskList);
-					for (Future<Double> result : results) {
-						Pi += result.get();
+					startNumber = currentEndNumber;
+					endNumber = startNumber + nCalcEachThread;
+					if (currentEndNumber >= nCalculation) {
+						taskIterator.remove();
+						continue;
+					} else if (endNumber > nCalculation) {
+						endNumber = nCalculation;
+					}
+					currentEndNumber = endNumber;
+					parameters.add(startNumber + 1);
+					parameters.add(endNumber);
+					input.setParameters(parameters);
+					temp.setAlgorithmInput(input);
+					parameters.clear();
+				} else {
+					List<Future<IAlgorithm>> results = executor
+							.invokeAll(taskList);
+					for (Future<IAlgorithm> result : results) {
+						Pi += result.get().getResult();
+						nCompletedCalculation += result.get().getDoneNumber();
+						if (result.get().getDoneNumber() < nCalcEachThread) {
+							stopped = true;
+							break;
+						}
 					}
 					taskIterator = taskList.iterator(); // reset index of task
 				}
 			}
-
-			// // the last task contain calculation may remained
-			// if ((nCalculation - completedCalculation) > 0) {
-			// taskList.get(0).setStartNumber(completedCalculation + 1);
-			// taskList.get(0).setEndNumber(nCalculation);
-			// Future<IAlgorithm> result = executor.submit(taskList.get(0));
-			// Pi += result.get().getSum();
-			// }
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
+
 		executor.shutdown(); // Thread pool accept no more task
 
-		// System.out.println("completed calculation: " + completedCalculation);
+		System.out.println("completed calculation: " + nCompletedCalculation);
 		System.out.println("Finished all threads. PI: " + Pi);
 		System.out.println("Result in Math.PI:        " + Math.PI);
 		return Pi;
 
+	}
+
+	public void stop() {
+		for (CalculationTask task : taskList) {
+			task.stop();
+		}
 	}
 
 }

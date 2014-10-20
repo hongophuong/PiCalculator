@@ -11,7 +11,7 @@ public class CalculatorParameter extends ParameterInput {
 
 	public static final String TYPE = "calculator";
 	private final BigDecimal MAX_DOUBLE = new BigDecimal(Double.MAX_VALUE);
-	private final BigDecimal DEFAULT_LOOP_EACH_THREAD = new BigDecimal("1E6");
+	private final BigDecimal DEFAULT_LOOP_EACH_THREAD = new BigDecimal("1E8");
 	public static final int MAX_THREAD = 100;
 
 	public CalculatorParameter() {
@@ -21,22 +21,22 @@ public class CalculatorParameter extends ParameterInput {
 		this.parameters.add(new BigDecimal(0));
 	}
 
-	private void autoFillParameter() {
-		BigDecimal totalNumberOfLoop = (BigDecimal) this.parameters.get(0);
-		BigDecimal loopEachThread = (BigDecimal) this.parameters.get(2);
-		Integer numberOfThread = (Integer) this.parameters.get(1);
+	private void autoFillParameter(List<Object> parameters) {
+		BigDecimal totalNumberOfLoop = (BigDecimal) parameters.get(0);
+		BigDecimal loopEachThread = (BigDecimal) parameters.get(2);
+		Integer numberOfThread = (Integer) parameters.get(1);
 
 		if (totalNumberOfLoop == null) {
 			throw new NullPointerException("Number of loop is null!");
 		}
-		if (numberOfThread == null) {
+		if (numberOfThread == null || numberOfThread <= 0) {
 			parameters.set(1, Runtime.getRuntime().availableProcessors());
 		}
 		if (loopEachThread == null) {
 			if (totalNumberOfLoop.compareTo(DEFAULT_LOOP_EACH_THREAD) > 0) {
-				parameters.set(1, DEFAULT_LOOP_EACH_THREAD);
+				parameters.set(2, DEFAULT_LOOP_EACH_THREAD);
 			} else {
-				parameters.set(1, totalNumberOfLoop);
+				parameters.set(2, totalNumberOfLoop);
 
 			}
 		}
@@ -59,13 +59,13 @@ public class CalculatorParameter extends ParameterInput {
 	}
 
 	@Override
-	protected boolean checkParameter(List<?> parameters) {
+	protected boolean checkParameter(List<Object> parameters) {
 		if (parameters != null) {
 			if (parameters.size() >= 3) {
+				autoFillParameter(parameters);
 				if (parameters.get(0) instanceof BigDecimal
 						&& parameters.get(1) instanceof Integer
 						&& parameters.get(2) instanceof BigDecimal) {
-					autoFillParameter();
 					return checkCalculatorParameter(
 							(BigDecimal) parameters.get(0),
 							(Integer) parameters.get(1),

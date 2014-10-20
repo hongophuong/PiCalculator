@@ -20,48 +20,58 @@ import vn.com.tma.training.pi.calculator.MultiThreadPiCalculator;
  * 
  */
 public class App {
-	static MultiThreadPiCalculator multiThreadPiCalculator = new MultiThreadPiCalculator();
 	static BigDecimal numberOfCalculation, calculationEachThread;
 	static int numberOfThread;
 	static LeibnizWorkShop workshop = new LeibnizWorkShop();
 	static CalculatorParameter input = new CalculatorParameter();
 	static List<Object> parameters = new ArrayList<Object>();
-	
+	static MultiThreadPiCalculator multiThreadPiCalculator = new MultiThreadPiCalculator();
+
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		String control;
-		
-		while (true) {
-			System.out.println("Number of calculations n =  ");
-			numberOfCalculation = scanner.nextBigDecimal();
-			System.out.println("Number of threads t (0 < t <"
-					+ CalculatorParameter.MAX_THREAD + ") ");
-			System.out
-					.println("If input 0 then t = number of processor on computer! t = ");
-			numberOfThread = scanner.nextInt();
 
-			System.out.println("Number of calculations each thread c = ");
-			calculationEachThread = scanner.nextBigDecimal();
-			System.out
-					.println("-----------------Calculate-PI-------------------");
+		while (true) {
+			while (numberOfCalculation == null) {
+				System.out
+						.println("Input Parameter: [Number of calculations] [Number of threads] [Calculations each thread] ");
+				String inputString = scanner.nextLine();
+				String[] parameterStr = inputString.split(" ");
+				try {
+					System.out.println(inputString);
+					if (parameterStr.length > 0) {
+						numberOfCalculation = new BigDecimal(parameterStr[0]);
+						System.out.println(numberOfCalculation);
+					}
+					if (parameterStr.length > 1) {
+						numberOfThread = new Integer(parameterStr[1]);
+					}
+					if (parameterStr.length > 2) {
+						calculationEachThread = new BigDecimal(parameterStr[2]);
+					}
+				} catch (Exception e) {
+					System.out.println("Error: " + e.getMessage());
+					continue;
+				}
+			}
 			parameters.add(numberOfCalculation);
 			parameters.add(numberOfThread);
 			parameters.add(calculationEachThread);
-			
+
 			new Thread(new Runnable() {
 
 				public void run() {
 					try {
-						long startPoint = System.currentTimeMillis();
+						System.out.println("-----------------Calculate-PI-------------------");						
 						input.setParameters(parameters);
 						workshop.setParameter(input);
-						workshop.calculate();
-						System.out.println("Eslapsed Time: "
-								+ (System.currentTimeMillis() - startPoint));
-					}  catch (ArithmeticException e) {
+						multiThreadPiCalculator.setWorkShop(workshop);
+						multiThreadPiCalculator.calculate();
+					} catch (ArithmeticException e) {
 						System.out.println("Error: " + e.getMessage());
-					} finally{
+					} finally {
 						parameters.clear();
+						numberOfCalculation = null;
 					}
 
 				}
@@ -69,34 +79,23 @@ public class App {
 
 			System.out
 					.println("-----------------Control-Guide-------------------");
-			System.out.println("Input \'p\' to pause calculation");
-			System.out.println("Input \'c\' to continue calculation");
 			System.out.println("Input \'s\' to stop calculation");
 			System.out
-					.println("Input \'next\' to stop current calculation an start a new one");
+					.println("Input \'n\' to stop current calculation an start a new one");
 			System.out.println("Input \'e\' to exit program");
 			System.out
 					.println("-------------------------------------------------");
 
-			while (!(control = scanner.next()).equals("next")) {
+			while (!(control = scanner.nextLine()).equals("n")) {
 				if (control.equals("e")) {
 					scanner.close();
 					System.out.println("Exited Program");
 					System.exit(0);
 				}
-				if (control.equals("p")) {
-					multiThreadPiCalculator.pauseCalculation();
-				}
-				if (control.equals("c")) {
-					multiThreadPiCalculator.continueCalculation();
-				}
 				if (control.equals("s")) {
 					multiThreadPiCalculator.stopCalculation();
 				}
 			}
-//			if (multiThreadPiCalculator.isRunning()) {
-//				multiThreadPiCalculator.stopCalculation();
-//			}
 		}
 
 	}

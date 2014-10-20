@@ -23,11 +23,15 @@ public interface IAlgorithm {
 	 *            The number represent for the end of calculation
 	 */
 	public void setParameter(ParameterInput input);
-	
+
 	public double runAlgorithm();
+
+	public void stopAlgorithm();
 
 	/**
 	 * @return Sum of all the calculation from start number to end number
 	 */
-	public double getResult();	
+	public double getResult();
+
+	public double getDoneNumber();
 }

@@ -26,6 +26,7 @@ public class LeibnizAlgorithm implements IAlgorithm {
 	private double startNumber = 0; // The number from which start calculating
 	private double sum = 0.0; // the sum using Leibniz Formula
 	private double denominator; // Mean (2*n+1) in Leibniz fomular
+	private boolean running = true;
 
 	public double runAlgorithm() {
 		// If startNumber is odd then sign = -1 else sign = 1
@@ -37,9 +38,18 @@ public class LeibnizAlgorithm implements IAlgorithm {
 			sum += (sign / denominator);
 			// Change the sign instead of using pow of (-1)^k
 			sign *= -1.0;
+			if (!running) {
+				System.out.println("out");
+				break;
+			}
 		}
 		sum = sum * 4;
 		return sum;
+	}
+
+	public void stopAlgorithm() {
+		running = false;
+		System.out.println("stop algorithm");
 	}
 
 	public void setParameter(ParameterInput input) {
@@ -57,8 +67,8 @@ public class LeibnizAlgorithm implements IAlgorithm {
 		return sum;
 	}
 
-	public double getCurrentNumber() {
-		return (denominator - 1) / 2;
+	public double getDoneNumber() {
+		return ((denominator - 1) / 2 - startNumber);
 	}
 
 }

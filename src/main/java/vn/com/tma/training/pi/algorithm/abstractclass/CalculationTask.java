@@ -2,7 +2,7 @@ package vn.com.tma.training.pi.algorithm.abstractclass;
 
 import java.util.concurrent.Callable;
 
-public class CalculationTask implements Callable<Double> {
+public class CalculationTask implements Callable<IAlgorithm> {
 
 	IAlgorithm algorithm;
 
@@ -18,15 +18,16 @@ public class CalculationTask implements Callable<Double> {
 		this.algorithm.setParameter(input);
 	}
 
-	public Double call() throws Exception {
-		double result = algorithm.runAlgorithm();
-		return result;
+	public IAlgorithm call() throws Exception {
+		algorithm.runAlgorithm();
+		return algorithm;
 	}
 	
 	/**
 	 * Stop running algorithm.
 	 */
-	void stopAlgorithm() {
-
+	public void stop() {
+		algorithm.stopAlgorithm();
+		System.out.println("stop calculation task");
 	}
 }

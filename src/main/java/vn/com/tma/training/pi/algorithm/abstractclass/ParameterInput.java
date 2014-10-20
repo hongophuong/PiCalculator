@@ -20,6 +20,6 @@ public abstract class ParameterInput {
 
 	public abstract boolean istype(String type);
 
-	protected abstract boolean checkParameter(List<?> parameters);
+	protected abstract boolean checkParameter(List<Object> parameters);
 	
 }
