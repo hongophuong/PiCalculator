@@ -1,4 +1,4 @@
-package vn.com.tma.training.pi.algorithm.abstractclass;
+package com.tma.gbst.pi.algorithm.abstractclass;
 
 import java.util.InputMismatchException;
 import java.util.List;

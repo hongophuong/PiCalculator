@@ -3,16 +3,16 @@
  * Make a Pi number calculator
  */
 
-package vn.com.tma.training.pi;
+package com.tma.gbst.pi;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import vn.com.tma.training.pi.algorithm.concreteclass.LeibnizWorkShop;
-import vn.com.tma.training.pi.calculator.CalculatorParameter;
-import vn.com.tma.training.pi.calculator.MultiThreadPiCalculator;
+import com.tma.gbst.pi.algorithm.concreteclass.LeibnizWorkShop;
+import com.tma.gbst.pi.calculator.CalculatorParameter;
+import com.tma.gbst.pi.calculator.MultiThreadPiCalculator;
 
 /**
  * This class use the PiCalculator and support the way to control program: pause
@@ -38,10 +38,8 @@ public class App {
 				String inputString = scanner.nextLine();
 				String[] parameterStr = inputString.split(" ");
 				try {
-					System.out.println(inputString);
 					if (parameterStr.length > 0) {
 						numberOfCalculation = new BigDecimal(parameterStr[0]);
-						System.out.println(numberOfCalculation);
 					}
 					if (parameterStr.length > 1) {
 						numberOfThread = new Integer(parameterStr[1]);
@@ -62,10 +60,10 @@ public class App {
 
 				public void run() {
 					try {
-						System.out.println("-----------------Calculate-PI-------------------");						
+						System.out
+								.println("-----------Calculate-PI-----------");
 						input.setParameters(parameters);
-						workshop.setParameter(input);
-						multiThreadPiCalculator.setWorkShop(workshop);
+						multiThreadPiCalculator.setWorkShop(workshop, input);
 						multiThreadPiCalculator.calculate();
 					} catch (ArithmeticException e) {
 						System.out.println("Error: " + e.getMessage());
@@ -77,14 +75,12 @@ public class App {
 				}
 			}).start();
 
-			System.out
-					.println("-----------------Control-Guide-------------------");
+			System.out.println("---------------Control-Guide-----------------");
+			System.out.println("Input \'i\' to show current calculator info");
 			System.out.println("Input \'s\' to stop calculation");
-			System.out
-					.println("Input \'n\' to stop current calculation an start a new one");
+			System.out.println("Input \'n\' to start a new calculation");
 			System.out.println("Input \'e\' to exit program");
-			System.out
-					.println("-------------------------------------------------");
+			System.out.println("---------------------------------------------");
 
 			while (!(control = scanner.nextLine()).equals("n")) {
 				if (control.equals("e")) {
@@ -95,7 +91,11 @@ public class App {
 				if (control.equals("s")) {
 					multiThreadPiCalculator.stopCalculation();
 				}
+				if (control.equals("i")) {
+					multiThreadPiCalculator.showInfo();
+				}
 			}
+			multiThreadPiCalculator.stopCalculation();
 		}
 
 	}

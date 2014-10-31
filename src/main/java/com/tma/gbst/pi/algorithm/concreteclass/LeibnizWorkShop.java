@@ -1,4 +1,4 @@
-package vn.com.tma.training.pi.algorithm.concreteclass;
+package com.tma.gbst.pi.algorithm.concreteclass;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,11 +8,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import vn.com.tma.training.pi.algorithm.abstractclass.AlgorithmWorkShop;
-import vn.com.tma.training.pi.algorithm.abstractclass.CalculationTask;
-import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
-import vn.com.tma.training.pi.calculator.CalculatorParameter;
+import com.tma.gbst.pi.algorithm.abstractclass.AlgorithmWorkShop;
+import com.tma.gbst.pi.algorithm.abstractclass.CalculationTask;
+import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
+import com.tma.gbst.pi.calculator.CalculatorParameter;
 
+
+
+/**
+ * Divide works into tasks, task will be done by workers. Works is calculations,
+ * task is CalculationTask will have a part of all calculations, workers is
+ * threads that ExcutorService supply
+ * 
+ * @author hngophuong
+ * @see AlgorithmWorkShop
+ */
 public class LeibnizWorkShop implements AlgorithmWorkShop {
 	private double nCalculation, nCalcEachThread;
 	private int nThread;
@@ -63,7 +73,12 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 			LeibnizParameter input = new LeibnizParameter();
 			List<Object> parameters = new ArrayList<Object>();
 			currentEndNumber = 0;
-
+			/*
+			 * Loop until all calculations are completed. If taskList have
+			 * enough task for threads in thread pool to do, then invokeAll
+			 * these tasks. If the last remained calculation not enough to
+			 * divide into task for each thread, then reduce size of taskList.
+			 */
 			while (nCompletedCalculation < nCalculation && !stopped) {
 				if (taskIterator.hasNext()) {
 					temp = taskIterator.next();
@@ -87,6 +102,12 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 					for (Future<IAlgorithm> result : results) {
 						Pi += result.get().getResult();
 						nCompletedCalculation += result.get().getDoneNumber();
+						/*
+						 * When stop() method of algorithm is invoked,
+						 * CalculationTask in task list turn on the sign
+						 * stopping. All task is running continue to work but
+						 * next task will be stopped
+						 */
 						if (result.get().getDoneNumber() < nCalcEachThread) {
 							stopped = true;
 							break;
@@ -96,16 +117,23 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
-		executor.shutdown(); // Thread pool accept no more task
+		/*
+		 * Thread pool accept no more task
+		 */
+		executor.shutdown();
 
 		System.out.println("completed calculation: " + nCompletedCalculation);
 		System.out.println("Finished all threads. PI: " + Pi);
 		System.out.println("Result in Math.PI:        " + Math.PI);
 		return Pi;
+	}
 
+	public String showInfo() {
+		return "Completed calculation: " + nCompletedCalculation
+				+ " and current number PI: " + Pi;
 	}
 
 	public void stop() {

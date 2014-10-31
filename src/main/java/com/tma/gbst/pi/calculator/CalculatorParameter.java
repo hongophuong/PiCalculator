@@ -1,12 +1,19 @@
-package vn.com.tma.training.pi.calculator;
+package com.tma.gbst.pi.calculator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 
-import vn.com.tma.training.pi.algorithm.abstractclass.ParameterInput;
+import com.tma.gbst.pi.algorithm.abstractclass.ParameterInput;
 
+/**
+ * CalculatorParameter have a list of 3 parameter: a BigDecimal numberofLoop, a
+ * Integer numberOfThread, a BigDecimal loopEachThread.
+ * 
+ * @author hngophuong
+ *
+ */
 public class CalculatorParameter extends ParameterInput {
 
 	public static final String TYPE = "calculator";
@@ -14,6 +21,10 @@ public class CalculatorParameter extends ParameterInput {
 	private final BigDecimal DEFAULT_LOOP_EACH_THREAD = new BigDecimal("1E8");
 	public static final int MAX_THREAD = 100;
 
+	/**
+	 * By default, calculator take parameters [0,1,0] for
+	 * [totalNumberOfLoop,numberofThead,loopEachThread]
+	 */
 	public CalculatorParameter() {
 		this.parameters = new ArrayList<Object>(3);
 		this.parameters.add(new BigDecimal(0));
@@ -21,6 +32,15 @@ public class CalculatorParameter extends ParameterInput {
 		this.parameters.add(new BigDecimal(0));
 	}
 
+	/**
+	 * Allow some of the inputed parameters call be null. The null
+	 * totalNumberOfLoop is not accepted. The null nOfThread will be the number
+	 * of availableProcessors. The null loopEachThread will be set to
+	 * DEFAULT_LOOP_EACH_THREAD or totalNumberOfLoop (if totalNumberOfLoop <
+	 * DEFAULT_LOOP_EACH_THREAD)
+	 * 
+	 * @param parameters
+	 */
 	private void autoFillParameter(List<Object> parameters) {
 		BigDecimal totalNumberOfLoop = (BigDecimal) parameters.get(0);
 		BigDecimal loopEachThread = (BigDecimal) parameters.get(2);
@@ -42,6 +62,17 @@ public class CalculatorParameter extends ParameterInput {
 		}
 	}
 
+	/**
+	 * Check inputed parameters with some rules: those number can not be
+	 * negative number, numberOfLoop can't be double number overflowed,
+	 * loopEachThread can not bigger than numberOfThread, numberOfThread can not
+	 * bigger than MAX_THREAD
+	 * 
+	 * @param numberOfLoop
+	 * @param numberOfThread
+	 * @param loopEachThread
+	 * @return true if parameter is accepted
+	 */
 	private boolean checkCalculatorParameter(BigDecimal numberOfLoop,
 			Integer numberOfThread, BigDecimal loopEachThread) {
 		if (numberOfLoop.compareTo(MAX_DOUBLE) > 0
@@ -58,6 +89,10 @@ public class CalculatorParameter extends ParameterInput {
 		return true;
 	}
 
+	/**
+	 * Check number of parameter in list must >=3, check null parameter, use
+	 * autoFillParameter method and checkCalculatorParameter method
+	 */
 	@Override
 	protected boolean checkParameter(List<Object> parameters) {
 		if (parameters != null) {

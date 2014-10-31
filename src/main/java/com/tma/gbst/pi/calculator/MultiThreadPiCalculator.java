@@ -3,12 +3,12 @@
  * Make a Pi number calculator
  */
 
-package vn.com.tma.training.pi.calculator;
+package com.tma.gbst.pi.calculator;
 
 import java.util.concurrent.ExecutorService;
 
-import vn.com.tma.training.pi.algorithm.abstractclass.AlgorithmWorkShop;
-import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
+import com.tma.gbst.pi.algorithm.abstractclass.AlgorithmWorkShop;
+import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
 
 /**
  * This class take parameter from user => check input => create thread pool =>
@@ -22,8 +22,18 @@ import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
 public class MultiThreadPiCalculator {
 	private AlgorithmWorkShop workshop;
 
-	public void setWorkShop(AlgorithmWorkShop workshop) {
+	public void setWorkShop(AlgorithmWorkShop workshop,
+			CalculatorParameter input) {
+		if (workshop == null) {
+			throw new NullPointerException(
+					"Algorithm workshop can not be null!");
+		}
+		if (input == null) {
+			throw new NullPointerException("Calculator Input can not be null!");
+		}
+
 		this.workshop = workshop;
+		this.workshop.setParameter(input);
 	}
 
 	public double calculate() {
@@ -33,6 +43,10 @@ public class MultiThreadPiCalculator {
 				+ (System.currentTimeMillis() - startPoint));
 
 		return result;
+	}
+
+	public void showInfo() {
+		System.out.println(workshop.showInfo());
 	}
 
 	public void stopCalculation() {

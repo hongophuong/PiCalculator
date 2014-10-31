@@ -3,13 +3,14 @@
  * Make a Pi number calculator
  */
 
-package vn.com.tma.training.pi.algorithm.concreteclass;
+package com.tma.gbst.pi.algorithm.concreteclass;
 
 import java.util.InputMismatchException;
 import java.util.List;
 
-import vn.com.tma.training.pi.algorithm.abstractclass.IAlgorithm;
-import vn.com.tma.training.pi.algorithm.abstractclass.ParameterInput;
+import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
+import com.tma.gbst.pi.algorithm.abstractclass.ParameterInput;
+
 
 /**
  * An concrete implementation of IAlgorithm using Leibniz's algorithm PI/4 =
@@ -28,7 +29,10 @@ public class LeibnizAlgorithm implements IAlgorithm {
 	private double denominator; // Mean (2*n+1) in Leibniz fomular
 	private boolean running = true;
 
-	public double runAlgorithm() {
+	/**
+	 * Run the algorithm
+	 */
+	public void runAlgorithm() {
 		// If startNumber is odd then sign = -1 else sign = 1
 		double sign = (startNumber % 2 == 0) ? 1 : -1;
 		double endDenominator = 2 * endNumber + 1;
@@ -39,20 +43,28 @@ public class LeibnizAlgorithm implements IAlgorithm {
 			// Change the sign instead of using pow of (-1)^k
 			sign *= -1.0;
 			if (!running) {
-				System.out.println("out");
+				// System.out.println("out");
 				break;
 			}
 		}
 		sum = sum * 4;
-		return sum;
 	}
 
 	public void stopAlgorithm() {
 		running = false;
-		System.out.println("stop algorithm");
+		// System.out.println("stop algorithm");
 	}
 
+	/**
+	 * Set parameter for algorithm
+	 * 
+	 * @param input A parameter object
+	 * @see ParameterInput)
+	 */
 	public void setParameter(ParameterInput input) {
+		if (input == null) {
+			throw new NullPointerException("Paramerter input can not be null!");
+		}
 		if (!input.istype(LeibnizParameter.TYPE)) {
 			throw new InputMismatchException(
 					"Wrong input for Leibniz formular!");
@@ -63,10 +75,16 @@ public class LeibnizAlgorithm implements IAlgorithm {
 		sum = 0;
 	}
 
+	/**
+	 * @return result of calculation by Leibniz formula with concrete input
+	 */
 	public double getResult() {
 		return sum;
 	}
 
+	/**
+	 * @return Current calculations have done
+	 */
 	public double getDoneNumber() {
 		return ((denominator - 1) / 2 - startNumber);
 	}

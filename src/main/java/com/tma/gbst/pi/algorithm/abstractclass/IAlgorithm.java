@@ -3,33 +3,32 @@
  * Make a Pi number calculator
  */
 
-package vn.com.tma.training.pi.algorithm.abstractclass;
+package com.tma.gbst.pi.algorithm.abstractclass;
 
 /**
  * An interface of algorithm to calculate PI number. Concrete algorithms will
- * implement this and have own implementation. it extends Callable return a
- * IAlgorithm.
+ * implement this and have own implementation.
  * 
  * @author HNP
- * @version 1.0
+ * @version 1.1
  * @see Runnable
  */
 public interface IAlgorithm {
 
 	/**
-	 * Set the end number to which the algorithm will stop
+	 * Set parameters for algorithm, this input can not be null
 	 * 
-	 * @param n
+	 * @param input
 	 *            The number represent for the end of calculation
 	 */
 	public void setParameter(ParameterInput input);
 
-	public double runAlgorithm();
+	public void runAlgorithm();
 
 	public void stopAlgorithm();
 
 	/**
-	 * @return Sum of all the calculation from start number to end number
+	 * @return Sum of all the calculation of the inputed parameters
 	 */
 	public double getResult();
 

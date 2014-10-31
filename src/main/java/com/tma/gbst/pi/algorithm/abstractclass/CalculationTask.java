@@ -1,4 +1,4 @@
-package vn.com.tma.training.pi.algorithm.abstractclass;
+package com.tma.gbst.pi.algorithm.abstractclass;
 
 import java.util.concurrent.Callable;
 
@@ -28,6 +28,6 @@ public class CalculationTask implements Callable<IAlgorithm> {
 	 */
 	public void stop() {
 		algorithm.stopAlgorithm();
-		System.out.println("stop calculation task");
+		// System.out.println("stop calculation task");
 	}
 }
