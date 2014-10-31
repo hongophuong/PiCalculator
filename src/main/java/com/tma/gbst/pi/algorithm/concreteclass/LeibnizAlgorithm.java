@@ -6,7 +6,6 @@
 package com.tma.gbst.pi.algorithm.concreteclass;
 
 import java.util.InputMismatchException;
-import java.util.List;
 
 import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
 import com.tma.gbst.pi.algorithm.abstractclass.ParameterInput;
@@ -69,9 +68,9 @@ public class LeibnizAlgorithm implements IAlgorithm {
 			throw new InputMismatchException(
 					"Wrong input for Leibniz formular!");
 		}
-		List<?> parameters = input.getParameters();
-		startNumber = (Double) parameters.get(0);
-		endNumber = (Double) parameters.get(1);
+		Object[] parameters = input.getParameters();
+		startNumber = (Double) parameters[0];
+		endNumber = (Double) parameters[1];
 		sum = 0;
 	}
 

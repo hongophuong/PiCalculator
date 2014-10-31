@@ -19,7 +19,7 @@ import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
  * @see ExecutorService
  * @see IAlgorithm
  */
-public class MultiThreadPiCalculator {
+public class PiCalculator {
 	private AlgorithmWorkShop workshop;
 
 	public void setWorkShop(AlgorithmWorkShop workshop,

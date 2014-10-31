@@ -1,9 +1,7 @@
 package com.tma.gbst.pi.calculator;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 
 import com.tma.gbst.pi.algorithm.abstractclass.ParameterInput;
 
@@ -26,10 +24,10 @@ public class CalculatorParameter extends ParameterInput {
 	 * [totalNumberOfLoop,numberofThead,loopEachThread]
 	 */
 	public CalculatorParameter() {
-		this.parameters = new ArrayList<Object>(3);
-		this.parameters.add(new BigDecimal(0));
-		this.parameters.add(new Integer(1));
-		this.parameters.add(new BigDecimal(0));
+		this.parameters = new Object[3];
+		for (int i = 0; i < parameters.length; i++) {
+			parameters[i] = null;
+		}
 	}
 
 	/**
@@ -41,22 +39,22 @@ public class CalculatorParameter extends ParameterInput {
 	 * 
 	 * @param parameters
 	 */
-	private void autoFillParameter(List<Object> parameters) {
-		BigDecimal totalNumberOfLoop = (BigDecimal) parameters.get(0);
-		BigDecimal loopEachThread = (BigDecimal) parameters.get(2);
-		Integer numberOfThread = (Integer) parameters.get(1);
+	private void autoFillParameter(Object... parameters) {
+		BigDecimal totalNumberOfLoop = (BigDecimal) parameters[0];
+		BigDecimal loopEachThread = (BigDecimal) parameters[2];
+		Integer numberOfThread = (Integer) parameters[1];
 
 		if (totalNumberOfLoop == null) {
 			throw new NullPointerException("Number of loop is null!");
 		}
 		if (numberOfThread == null || numberOfThread <= 0) {
-			parameters.set(1, Runtime.getRuntime().availableProcessors());
+			parameters[1] = Runtime.getRuntime().availableProcessors();
 		}
 		if (loopEachThread == null) {
 			if (totalNumberOfLoop.compareTo(DEFAULT_LOOP_EACH_THREAD) > 0) {
-				parameters.set(2, DEFAULT_LOOP_EACH_THREAD);
+				parameters[2] = DEFAULT_LOOP_EACH_THREAD;
 			} else {
-				parameters.set(2, totalNumberOfLoop);
+				parameters[2] = totalNumberOfLoop;
 
 			}
 		}
@@ -94,17 +92,15 @@ public class CalculatorParameter extends ParameterInput {
 	 * autoFillParameter method and checkCalculatorParameter method
 	 */
 	@Override
-	protected boolean checkParameter(List<Object> parameters) {
+	protected boolean checkParameter(Object... parameters) {
 		if (parameters != null) {
-			if (parameters.size() >= 3) {
+			if (parameters.length >= 3) {
 				autoFillParameter(parameters);
-				if (parameters.get(0) instanceof BigDecimal
-						&& parameters.get(1) instanceof Integer
-						&& parameters.get(2) instanceof BigDecimal) {
-					return checkCalculatorParameter(
-							(BigDecimal) parameters.get(0),
-							(Integer) parameters.get(1),
-							(BigDecimal) parameters.get(2));
+				if (parameters[0] instanceof BigDecimal
+						&& parameters[1] instanceof Integer
+						&& parameters[2] instanceof BigDecimal) {
+					return checkCalculatorParameter((BigDecimal) parameters[0],
+							(Integer) parameters[1], (BigDecimal) parameters[2]);
 				} else {
 					throw new InputMismatchException(
 							"Wrong type of inputed parameter!");

@@ -1,11 +1,8 @@
 package com.tma.gbst.pi.algorithm.concreteclass;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 
 import com.tma.gbst.pi.algorithm.abstractclass.ParameterInput;
-
 
 public class LeibnizParameter extends ParameterInput {
 
@@ -16,9 +13,8 @@ public class LeibnizParameter extends ParameterInput {
 	 * parameter object have a list of 2 double number
 	 */
 	public LeibnizParameter() {
-		this.parameters = new ArrayList<Object>(2);
-		this.parameters.add(0.0);
-		this.parameters.add(0.0);
+		this.parameters = new Object[2];
+		parameters[0] = parameters[1] = 0;
 	}
 
 	@Override
@@ -27,9 +23,9 @@ public class LeibnizParameter extends ParameterInput {
 	}
 
 	@Override
-	protected boolean checkParameter(List<Object> parameters) {
+	protected boolean checkParameter(Object... parameters) {
 		if (parameters != null) {
-			if (parameters.size() >= 2 && checkLeibnizParameter(parameters)) {
+			if (parameters.length >= 2 && checkLeibnizParameter(parameters)) {
 				return true;
 			}
 		}
@@ -37,21 +33,40 @@ public class LeibnizParameter extends ParameterInput {
 	}
 
 	/**
-	 * @param parameters a list of parameters 
-	 * @return true if parameter is legal 
+	 * @param parameters
+	 *            a list of parameters
+	 * @return true if parameter is legal
 	 */
-	private boolean checkLeibnizParameter(List<Object> parameters) {
-		if (parameters.get(0) == null || parameters.get(1) == null) {
+	private boolean checkLeibnizParameter(Object... parameters) {
+		if (parameters[0] == null || parameters[1] == null) {
 			throw new NullPointerException("Leibniz parameter can not be null");
 		}
-		if (parameters.get(0) instanceof Double
-				&& parameters.get(1) instanceof Double) {
-			double from = (Double) parameters.get(0);
-			double to = (Double) parameters.get(1);
+		if (parameters[0] instanceof Double && parameters[1] instanceof Double) {
+			double from = (Double) parameters[0];
+			double to = (Double) parameters[1];
 			return ((to >= from) && (from >= 0)) ? true : false;
 		} else {
 			throw new InputMismatchException(
 					"Input Leibniz paramater must be Double");
 		}
 	}
+
+	// /**
+	// * @param parameters a list of parameters
+	// * @return true if parameter is legal
+	// */
+	// private boolean checkLeibnizParameter(List<Object> parameters) {
+	// if (parameters.get(0) == null || parameters.get(1) == null) {
+	// throw new NullPointerException("Leibniz parameter can not be null");
+	// }
+	// if (parameters.get(0) instanceof Double
+	// && parameters.get(1) instanceof Double) {
+	// double from = (Double) parameters.get(0);
+	// double to = (Double) parameters.get(1);
+	// return ((to >= from) && (from >= 0)) ? true : false;
+	// } else {
+	// throw new InputMismatchException(
+	// "Input Leibniz paramater must be Double");
+	// }
+	// }
 }

@@ -4,25 +4,30 @@ import java.util.concurrent.Callable;
 
 public class CalculationTask implements Callable<IAlgorithm> {
 
-	IAlgorithm algorithm;
-
-	public void setAlgorithm(IAlgorithm algorithm) {
+	private IAlgorithm algorithm;
+	
+	private CalculationTask(IAlgorithm algorithm) {
 		this.algorithm = algorithm;
 	}
 
 	public void setAlgorithmInput(ParameterInput input) {
+		this.algorithm.setParameter(input);
+	}
+	
+	public static CalculationTask newInstance(IAlgorithm algorithm) {
 		if (algorithm == null) {
 			throw new NullPointerException(
 					"Please set concrete algorithm for task");
 		}
-		this.algorithm.setParameter(input);
+		CalculationTask task = new CalculationTask(algorithm);
+		return task;
 	}
 
 	public IAlgorithm call() throws Exception {
 		algorithm.runAlgorithm();
 		return algorithm;
 	}
-	
+		
 	/**
 	 * Stop running algorithm.
 	 */

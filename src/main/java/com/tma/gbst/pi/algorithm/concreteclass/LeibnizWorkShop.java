@@ -13,8 +13,6 @@ import com.tma.gbst.pi.algorithm.abstractclass.CalculationTask;
 import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
 import com.tma.gbst.pi.calculator.CalculatorParameter;
 
-
-
 /**
  * Divide works into tasks, task will be done by workers. Works is calculations,
  * task is CalculationTask will have a part of all calculations, workers is
@@ -24,54 +22,51 @@ import com.tma.gbst.pi.calculator.CalculatorParameter;
  * @see AlgorithmWorkShop
  */
 public class LeibnizWorkShop implements AlgorithmWorkShop {
-	private double nCalculation, nCalcEachThread;
-	private int nThread;
-	private List<CalculationTask> taskList;
+	private double nCalculations, nCalcEachThread;
+	private int nThreads;
+	private List<CalculationTask> tasks;
 	private ExecutorService executor; // To create thread pool
-	private double Pi; // store calculated result
-	private double nCompletedCalculation;
+	private double pi; // store calculated result
+	private double nCompletedCalculations;
 
 	public void setParameter(CalculatorParameter input) {
-		List<?> parameters = input.getParameters();
-		this.nCalculation = ((BigDecimal) parameters.get(0)).doubleValue();
-		this.nThread = (Integer) parameters.get(1);
-		this.nCalcEachThread = ((BigDecimal) parameters.get(2)).doubleValue();
+		Object[] parameters = input.getParameters();
+		this.nCalculations = ((BigDecimal) parameters[0]).doubleValue();
+		this.nThreads = (Integer) parameters[1];
+		this.nCalcEachThread = ((BigDecimal) parameters[2]).doubleValue();
 	}
 
 	public double run() {
-		int nTask;
+		int nTasks;
 		double startNumber, endNumber, currentEndNumber;
 		boolean stopped = false;
-		Pi = 4;
-		nCompletedCalculation = 0;
+		pi = 4;
+		nCompletedCalculations = 0;
 
 		/*
 		 * Create a threadpool have fixed number of threads
 		 */
-		executor = Executors.newFixedThreadPool(nThread);
+		executor = Executors.newFixedThreadPool(nThreads);
 
 		/*
 		 * Compute number of task
 		 */
-		nTask = (int) (nCalculation / nCalcEachThread);
+		nTasks = (int) (nCalculations / nCalcEachThread);
 
 		/*
 		 * Create a fixed number of task instance, it equal to number of threads
 		 * This help to not create too many task objects
 		 */
-		taskList = new ArrayList<CalculationTask>();
-		int taskListSize = Math.min(nTask, nThread);
+		tasks = new ArrayList<CalculationTask>();
+		int taskListSize = Math.min(nTasks, nThreads);
 		for (int i = 0; i < taskListSize; i++) {
-			CalculationTask temp = new CalculationTask();
-			temp.setAlgorithm(new LeibnizAlgorithm());
-			taskList.add(temp);
+			tasks.add(CalculationTask.newInstance(new LeibnizAlgorithm()));
 		}
 
-		Iterator<CalculationTask> taskIterator = taskList.iterator();
-		CalculationTask temp = null;
+		Iterator<CalculationTask> taskIterator = tasks.iterator();
+		CalculationTask currentTask = null;
 		try {
 			LeibnizParameter input = new LeibnizParameter();
-			List<Object> parameters = new ArrayList<Object>();
 			currentEndNumber = 0;
 			/*
 			 * Loop until all calculations are completed. If taskList have
@@ -79,29 +74,28 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 			 * these tasks. If the last remained calculation not enough to
 			 * divide into task for each thread, then reduce size of taskList.
 			 */
-			while (nCompletedCalculation < nCalculation && !stopped) {
+			while (nCompletedCalculations < nCalculations && !stopped) {
 				if (taskIterator.hasNext()) {
-					temp = taskIterator.next();
+					currentTask = taskIterator.next();
 					startNumber = currentEndNumber;
 					endNumber = startNumber + nCalcEachThread;
-					if (currentEndNumber >= nCalculation) {
+
+					if (currentEndNumber >= nCalculations) {
 						taskIterator.remove();
 						continue;
-					} else if (endNumber > nCalculation) {
-						endNumber = nCalculation;
+					} else if (endNumber > nCalculations) {
+						endNumber = nCalculations;
 					}
+
 					currentEndNumber = endNumber;
-					parameters.add(startNumber + 1);
-					parameters.add(endNumber);
-					input.setParameters(parameters);
-					temp.setAlgorithmInput(input);
-					parameters.clear();
+					input.setParameters(startNumber + 1, endNumber);
+					currentTask.setAlgorithmInput(input);
 				} else {
 					List<Future<IAlgorithm>> results = executor
-							.invokeAll(taskList);
+							.invokeAll(tasks);
 					for (Future<IAlgorithm> result : results) {
-						Pi += result.get().getResult();
-						nCompletedCalculation += result.get().getDoneNumber();
+						pi += result.get().getResult();
+						nCompletedCalculations += result.get().getDoneNumber();
 						/*
 						 * When stop() method of algorithm is invoked,
 						 * CalculationTask in task list turn on the sign
@@ -113,7 +107,7 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 							break;
 						}
 					}
-					taskIterator = taskList.iterator(); // reset index of task
+					taskIterator = tasks.iterator(); // reset index of task
 				}
 			}
 		} catch (Exception e) {
@@ -125,19 +119,19 @@ public class LeibnizWorkShop implements AlgorithmWorkShop {
 		 */
 		executor.shutdown();
 
-		System.out.println("completed calculation: " + nCompletedCalculation);
-		System.out.println("Finished all threads. PI: " + Pi);
+		System.out.println("completed calculation: " + nCompletedCalculations);
+		System.out.println("Finished all threads. PI: " + pi);
 		System.out.println("Result in Math.PI:        " + Math.PI);
-		return Pi;
+		return pi;
 	}
 
 	public String showInfo() {
-		return "Completed calculation: " + nCompletedCalculation
-				+ " and current number PI: " + Pi;
+		return "Completed calculation: " + nCompletedCalculations
+				+ " and current number PI: " + pi;
 	}
 
 	public void stop() {
-		for (CalculationTask task : taskList) {
+		for (CalculationTask task : tasks) {
 			task.stop();
 		}
 	}
