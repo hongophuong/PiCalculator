@@ -7,7 +7,7 @@ package com.tma.gbst.pi.calculator;
 
 import java.util.concurrent.ExecutorService;
 
-import com.tma.gbst.pi.algorithm.abstractclass.AlgorithmWorkShop;
+import com.tma.gbst.pi.algorithm.abstractclass.AlgorithmWorkshop;
 import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
 
 /**
@@ -20,9 +20,9 @@ import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
  * @see IAlgorithm
  */
 public class PiCalculator {
-	private AlgorithmWorkShop workshop;
+	private AlgorithmWorkshop workshop;
 
-	public void setWorkShop(AlgorithmWorkShop workshop,
+	public void setWorkShop(AlgorithmWorkshop workshop,
 			CalculatorParameter input) {
 		if (workshop == null) {
 			throw new NullPointerException(

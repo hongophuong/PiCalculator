@@ -50,23 +50,4 @@ public class LeibnizParameter extends ParameterInput {
 					"Input Leibniz paramater must be Double");
 		}
 	}
-
-	// /**
-	// * @param parameters a list of parameters
-	// * @return true if parameter is legal
-	// */
-	// private boolean checkLeibnizParameter(List<Object> parameters) {
-	// if (parameters.get(0) == null || parameters.get(1) == null) {
-	// throw new NullPointerException("Leibniz parameter can not be null");
-	// }
-	// if (parameters.get(0) instanceof Double
-	// && parameters.get(1) instanceof Double) {
-	// double from = (Double) parameters.get(0);
-	// double to = (Double) parameters.get(1);
-	// return ((to >= from) && (from >= 0)) ? true : false;
-	// } else {
-	// throw new InputMismatchException(
-	// "Input Leibniz paramater must be Double");
-	// }
-	// }
 }

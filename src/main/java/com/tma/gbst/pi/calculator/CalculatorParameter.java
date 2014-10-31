@@ -114,5 +114,17 @@ public class CalculatorParameter extends ParameterInput {
 	public boolean istype(String type) {
 		return type.equals(TYPE);
 	}
+	
+	public double getNCalculations() {
+		return ((BigDecimal) parameters[0]).doubleValue();
+	}
+
+	public int getNThreads() {
+		return (Integer) parameters[1];
+	}
+
+	public double getCalcEachThread() {
+		return ((BigDecimal) parameters[2]).doubleValue();
+	}
 
 }

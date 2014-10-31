@@ -10,9 +10,9 @@ import com.tma.gbst.pi.calculator.CalculatorParameter;
  * @author hngophuong
  * @see CalculatorParameter
  */
-public interface AlgorithmWorkShop {
+public interface AlgorithmWorkshop {
 
-	public void setParameter(CalculatorParameter input);
+	public void setParameter(ParameterInput input);
 
 	public double run();
 

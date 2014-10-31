@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.tma.gbst.pi.algorithm.concreteclass.LeibnizWorkShop;
+import com.tma.gbst.pi.algorithm.abstractclass.AlgorithmWorkshop;
+import com.tma.gbst.pi.algorithm.concreteclass.LeibnizWorkshop;
 import com.tma.gbst.pi.calculator.CalculatorParameter;
 import com.tma.gbst.pi.calculator.PiCalculator;
 
@@ -21,13 +22,15 @@ import com.tma.gbst.pi.calculator.PiCalculator;
 public class App {
 	static BigDecimal numberOfCalculations, calculationEachThread;
 	static int numberOfThreads;
-	static LeibnizWorkShop workshop = new LeibnizWorkShop();
+	static AlgorithmWorkshop workshop = new LeibnizWorkshop();
 	static CalculatorParameter input = new CalculatorParameter();
 	static PiCalculator piCalculator = new PiCalculator();
 	static Scanner scanner = new Scanner(System.in);
 
 	public static void main(String[] args) {
 		String control;
+		final boolean[] running = new boolean[1];
+		running[0] = false;
 
 		while (true) {
 
@@ -37,12 +40,14 @@ public class App {
 
 				public void run() {
 					try {
-						System.out
-								.println("-----------Calculate-PI-----------");
+						running[0] = true;
 						input.setParameters(numberOfCalculations,
 								numberOfThreads, calculationEachThread);
 						piCalculator.setWorkShop(workshop, input);
 						piCalculator.calculate();
+						piCalculator.showInfo();
+						running[0] = false;
+						printControlGuide();
 					} catch (Exception e) {
 						System.out.println("Error: " + e.getMessage());
 					} finally {
@@ -60,12 +65,18 @@ public class App {
 					System.out.println("Exited Program");
 					System.exit(0);
 				}
-				if (control.equals("s")) {
-					piCalculator.stopCalculation();
+				if (running[0]) {
+
+					if (control.equals("s")) {
+						piCalculator.stopCalculation();
+					}
+					if (control.equals("i")) {
+						piCalculator.showInfo();
+					}
 				}
-				if (control.equals("i")) {
-					piCalculator.showInfo();
-				}
+			}
+			if (running[0]) {
+				piCalculator.stopCalculation();
 			}
 		}
 
@@ -85,6 +96,9 @@ public class App {
 			System.out
 					.println("Input Parameter: [Number of calculations] [Number of threads] [Calculations each thread] ");
 			String inputString = scanner.nextLine();
+			while(!(inputString.length()>0)){
+				inputString = scanner.nextLine();
+			}
 			String[] parameterStr = inputString.split(" ");
 			try {
 				if (parameterStr.length > 0) {
