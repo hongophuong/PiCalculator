@@ -24,7 +24,7 @@ public class App {
 	static int numberOfThreads;
 	static AlgorithmWorkshop workshop = new LeibnizWorkshop();
 	static CalculatorParameter input = new CalculatorParameter();
-	static PiCalculator piCalculator = new PiCalculator();
+	static PiCalculator piCalculator = null;
 	static Scanner scanner = new Scanner(System.in);
 
 	public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class App {
 						running[0] = true;
 						input.setParameters(numberOfCalculations,
 								numberOfThreads, calculationEachThread);
-						piCalculator.setWorkShop(workshop, input);
+						piCalculator = PiCalculator.newInstance(workshop, input);
 						piCalculator.calculate();
 						piCalculator.showInfo();
 						running[0] = false;

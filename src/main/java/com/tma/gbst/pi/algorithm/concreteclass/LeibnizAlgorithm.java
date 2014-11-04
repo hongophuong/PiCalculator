@@ -10,7 +10,6 @@ import java.util.InputMismatchException;
 import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
 import com.tma.gbst.pi.algorithm.abstractclass.ParameterInput;
 
-
 /**
  * An concrete implementation of IAlgorithm using Leibniz's algorithm PI/4 =
  * (-1)^n/(2*n+1) n from 0 to unlimit <=> PI/4 = 1 - 1/3 + 1/5 - 1/7 + 1/9 - ...
@@ -26,7 +25,7 @@ public class LeibnizAlgorithm implements IAlgorithm {
 	private double startNumber = 0; // The number from which start calculating
 	private double sum = 0.0; // the sum using Leibniz Formula
 	private double denominator; // Mean (2*n+1) in Leibniz fomular
-	private boolean running = true;
+	private volatile boolean running = true;
 
 	/**
 	 * Run the algorithm
@@ -36,15 +35,12 @@ public class LeibnizAlgorithm implements IAlgorithm {
 		double sign = (startNumber % 2 == 0) ? 1 : -1;
 		double endDenominator = 2 * endNumber + 1;
 
-		for (denominator = 2 * startNumber + 1; denominator <= endDenominator; denominator += 2) {
+		for (denominator = 2 * startNumber + 1; denominator <= endDenominator
+				&& running; denominator += 2) {
 			// Sum = (-1)^k/(2*k+1)
 			sum += (sign / denominator);
 			// Change the sign instead of using pow of (-1)^k
 			sign *= -1.0;
-			if (!running) {
-				// System.out.println("out");
-				break;
-			}
 		}
 		sum = sum * 4;
 	}
@@ -57,7 +53,8 @@ public class LeibnizAlgorithm implements IAlgorithm {
 	/**
 	 * Set parameter for algorithm
 	 * 
-	 * @param input A parameter object
+	 * @param input
+	 *            A parameter object
 	 * @see ParameterInput)
 	 */
 	public void setParameter(ParameterInput input) {

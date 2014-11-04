@@ -22,7 +22,11 @@ import com.tma.gbst.pi.algorithm.abstractclass.IAlgorithm;
 public class PiCalculator {
 	private AlgorithmWorkshop workshop;
 
-	public void setWorkShop(AlgorithmWorkshop workshop,
+	private PiCalculator(AlgorithmWorkshop workshop) {
+		this.workshop = workshop;
+	}
+
+	public static PiCalculator newInstance(AlgorithmWorkshop workshop,
 			CalculatorParameter input) {
 		if (workshop == null) {
 			throw new NullPointerException(
@@ -31,9 +35,8 @@ public class PiCalculator {
 		if (input == null) {
 			throw new NullPointerException("Calculator Input can not be null!");
 		}
-
-		this.workshop = workshop;
-		this.workshop.setParameter(input);
+		PiCalculator newCalculator = new PiCalculator(workshop.setParameter(input));
+		return newCalculator;
 	}
 
 	public double calculate() {
